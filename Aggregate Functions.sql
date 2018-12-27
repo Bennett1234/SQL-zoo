@@ -1,4 +1,8 @@
 /*
+Section SUM and COUNT
+*/
+
+/*
 world(name, continent, area, population, gdp)
 */
 
