@@ -11,13 +11,13 @@ FROM State JOIN Country ON (State.Country_Id = Country.Country_Id)
 ORDER BY State_Name ASC
 
 --#3
-SELECT Country_Name
+SELECT TOP(3) *
 FROM Country
-ORDER BY State_Name ASC
-LIMIT 3
+ORDER BY Country_Name ASC
+
 
 --#4
-SELECT Emp_Id
+SELECT Emp_First_Name
 FROM Employee_Details
 WHERE Emp_First_Name LIKE 'a%'
 
@@ -32,19 +32,22 @@ FROM Employee_Details
 WHERE Emp_Active = 0
 
 --#7
-SELECT Emp_First _Name AS First Name, Emp_Last_Name AS Last Name
-FROM Employee_Details
-
+EXEC sp_rename 'Employee_Details.Emp_First_Name' ,'First Name', 'COLUMN'
+EXEC sp_rename 'Employee_Details.Emp_Last_Name' ,'Last Name', 'COLUMN'
+EXEC sp_rename 'Employee_Details.Emp_Mioddel_Name' ,'Middle Name', 'COLUMN'
 --#8
 SELECT COUNT(DISTNCT Emp_Id)
 FROM Employee_Details
 
---#9?
+--#9
+/*
+there is' NULL' 
+*/
 SELECT COUNT(DISTNCT Emp_Id)
 FROM Employee_Details
-WHERE Emp_Middle_Name IS NOT NULL
+WHERE Emp_Middle_Name LIKE 'NULL'
 
---#10?
+--#10
 SELECT Emp_First_Name, COALESCE(Emp_Middle_Name, 'Not Applicable'), Emp_Last_Name
 FROM Employee_Details
 
@@ -61,72 +64,79 @@ FROM (
       )
 
 --#13
-SELECT *
+SELECT TOP(10) *
 FROM Employee_Details
 ORDER BY Emp_First_Name ASC
 
---#14?
+--#14
 SELECT *
 FROM Employee_Details JOIN City ON (City.City_Id = Emp_Details.City_Id)
-WHERE City_Name = 'Dallas, Algiers'
+WHERE City_Name = 'Dallas' OR City_Name = 'Algiers'
 
---#15?
+--#15
 SELECT *
 FROM Employee_Details JOIN City ON (City.City_Id = Emp_Details.City_Id)
 WHERE City_Name LIKE 'A%' OR City_Name LIKE 'B%' OR City_Name LIKE 'C%' OR City_Name LIKE 'D%'
 
---#16?
+--#16
 SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name
 FROM Employee_Details JOIN Country ON (Emploee_Details.Emp_Country_Id = Country.Country_Id
                       JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
-WHERE Emp_DOB BETWEEN '1/2/1984' AND '3/1/1986'
-
---#17?
-SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name,Emp_Salary
+WHERE Emp_DOB BETWEEN '1/2/1984' AND '1/3/1986'
+                                       
+--#17
+SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name,MAX(Emp_Salary)
 FROM Employee_Details JOIN Country ON (Emploee_Details.Emp_Country_Id = Country.Country_Id
                       JOIN Salary ON (Employee_Details.Emp_Id = Salary.Emp_Id)
                       JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
-WHERE Emp_Salary >= ALL(SELECT Emp_Salary
-                        FROM Salary
-                        WHERE Emp_Salary >=0)
+GROUP BY Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name
                         
 --#18?
-
---#19?
-SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name,Emp_Salary
+SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name,MAX(Emp_Salary)
+FROM Employee_Details JOIN Country ON (Emploee_Details.Emp_Country_Id = Country.Country_Id
+                      JOIN Salary ON (Employee_Details.Emp_Id = Salary.Emp_Id)
+                      JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
+GROUP BY Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name
+                                       
+SELECT Emp_Salary
+FROM 
+WHERE Emp_JoinDate >= (SELECT Emp_JoinDate FROM Y WHERE X.Emp_Id = Y.Emp_Id)
+                                       
+--#19
+SELECT Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name,MAX(Emp_Salary)
 FROM Employee_Details JOIN Country ON (Emploee_Details.Emp_Country_Id = Country.Country_Id
                       JOIN Salary ON (Employee_Details.Emp_Id = Salary.Emp_Id)
                       JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id) x
-WHERE (Emp_Salary BETWEEN 50000 AND 100000) AND Emp_Salary >= ALL(SELECT Emp_Salary
-                                                FROM Salary y
-                                                WHERE y.Emp_Id = x.Employee_Details.Emp_Id)
+WHERE Emp_Salary BETWEEN 50000 AND 100000 
+GROUP BY Emp_First_Name, Emp_Last_Name,Country_Name, Desig_Name
+                                       
 --#20
 SELECT SUBSTRING(Emp_First_Name,1,3)
 FROM Employee_Details
 
---#21?
+--#21
 SELECT REPLACE(Emp_First_Name,'A','$')
 FROM Emploee_Details
 
---#22?
-SELECT datepart(year,Emp_JoinDate) AS year
-       datepart(month, Emp_JoinDate) AS month
-       datepart(day, Emp_JoinDate) AS day
+--#22
+SELECT YEAR(Emp_JoinDate) AS year
+       MONTH(Emp_JoinDate) AS month
+       DAY(Emp_JoinDate) AS day
 FROM Employee_Details
 
---#23?
+--#23
 SELECT *
 FROM Employee_Details
-WHERE datepart(year,Emp_JoinDate) >= '2014'
+WHERE YEAR(Emp_JoinDate) = '2014'
 
---#24?
+--#24
 SELECT *
 FROM Employee_Details
 WHERE Emp_JoinDate) <= '1/1/2014'
 
 --#25
 SELECT Desig_Name, SUM(Emp_Salary)AS Total Salary
-FROM Employee_Details JOIN Salary ON (Employee_Details.Emp_City_Id = Salary.Emp_Id)
+FROM Employee_Details JOIN Salary ON (Employee_Details.Emp_Id = Salary.Emp_Id)
                       JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
 GROUP BY Desig_Name
 
