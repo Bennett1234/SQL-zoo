@@ -140,7 +140,7 @@ FROM Employee_Details JOIN Salary ON (Employee_Details.Emp_Id = Salary.Emp_Id)
                       JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
 GROUP BY Desig_Name
 
---#26?
+--#26
 SELECT Desig_Name, COUNT(Employee_Details.Desig_Id)
 FROM Employee_Details JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
 GROUP BY Desig_Name
@@ -150,7 +150,7 @@ SELECT Desig_Name, AVG(Emp_Salary)
 FROM Employee_Details JOIN Designation ON (Employee_Details.Desig_Id = Designation.Desig_Id)
                       JOIN Salary ON (Emploee_Details.Emp_Id = Salary.Emp_Id)
 GROUP BY Desig_Name
-ORDER BY AVG(Emp_Salary)
+ORDER BY AVG(Salary)
 
 --#28
 SELECT YEAR(Emp_JoinDate) as Joined_Year,  MONTH(Emp_JoinDate) as Joined_Month,count(Emp_id) as Number_of_employees
@@ -158,26 +158,28 @@ FROM Employee_Details
 group by Emp_Id, YEAR(Emp_JoinDate), MONTH(Emp_JoinDate)
 ORDER BY Joined_Year,Joined_Month
 
---#29?
+--#29
 SELECT Emp_Id
 FROM Employee_Details LEFT JOIN Salary ON (Emploee_Details.Emp_Id = Salary.Emp_Id)
 WHERE Emp_Salary IS NULL
 
 --#30
-SELECT Emp_First_Name, SUM(Emp_Salary)
+SELECT Emp_First_Name, SUM(COALESCE(Emp_Salary,0))
 FROM Employee_Details LEFT JOIN Salary ON (Emploee_Details.Emp_Id = Salary.Emp_Id)
 GROUP BY Emp_First_Name
 
 --#31?
 
---#32?
+--#32
+SELECT DATEDIFF(d,SYSDATETIME(),Emp_JoinData)
+FROM Employee_Details
 
---#33
+--#33?
 
---#34
+--#34?
 SELECT *
 FROM Employee_Details LEFT JOIN Salary ON (Emploee_Details.Emp_Id = Salary.Emp_Id) x
-WHERE (3-1 )= (SELECT COUNT(DISTINCT Emp_Salary)
+WHERE (3-1)= (SELECT COUNT(DISTINCT Emp_Salary)
             FROM Employee_Details LEFT JOIN Salary ON (Emploee_Details.Emp_Id = Salary.Emp_Id) y
             WHERE y.Emp_Salary > x.Emp_Salary)
 --#35?
