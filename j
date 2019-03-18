@@ -2,12 +2,14 @@ SELECT COUNT(*), v.post_id
     FROM  post AS p RIGHT OUTER JOIN vote AS v ON (p.post_id = v.post_id)     
     WHERE p.creator_id IN (SELECT followed_id
                               FROM folllwing
-                              where follower_id = Given id) 
-                              AND v.memebr_id <> Given_id
-                              AND v.vote_at BETWEEN sysdate-1 AND sysdate 
-                              AND v.member_id<> Given_id
-                              AND p.created_at BETWEEN sysdata-3 And sysdate
-    GROUP BY post_id
+                              where follower_id = Given_id) 
+          AND v.memebr_id <> Given_id
+          AND p.creator_id<> Given_id
+          AND p.created_at BETWEEN sysdata-3 And sysdate
+          AND v.post_id IN (SELECT DISTINCT post_id
+                                FROM vote
+                                WHERE voted_at BETWEEN sysdate-1 AND sysdate )
+    GROUP BY v.post_id
     ORDER BY COUNT(*) DESC
     LIMIT 10
 
